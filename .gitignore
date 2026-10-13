@@ -1,0 +1,4 @@
+# Publish processed assets; keep original images and private brand sources out.
+*.png
+/assets/brand/
+/assets/banner/archive/

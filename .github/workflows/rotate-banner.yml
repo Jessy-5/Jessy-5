@@ -1,0 +1,45 @@
+name: Rotate profile banner
+
+on:
+  schedule:
+    # 09:17 in Asia/Shanghai (01:17 UTC), away from the busy start of the hour.
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-banner-rotation
+  cancel-in-progress: false
+
+jobs:
+  rotate:
+    if: github.repository == 'Jessy-5/Jessy-5'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the default branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Verify banner rotation
+        run: node --test .github/scripts/rotate-banner.test.mjs
+
+      - name: Select today's banner
+        run: node .github/scripts/rotate-banner.mjs
+
+      - name: Commit the banner update
+        shell: bash
+        run: |
+          if git diff --quiet -- README.md .github/banner-state.json; then
+            echo "Today's banner is already selected; nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- README.md .github/banner-state.json
+          git commit -m "chore(profile): rotate daily banner"
+          git push
