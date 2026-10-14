@@ -1,4 +1,4 @@
-![Jessy — AI-native Product Designer & Design Engineer · Design × Technology](assets/banner/jessy-01-ice-blue.webp)
+![Jessy — AI-native Product Designer & Design Engineer · Design × Technology](assets/banner/jessy-01-ice-blue-v2.webp)
 
 Brand · UI/UX · Interaction · AI-assisted Development
 

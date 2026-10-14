@@ -83,6 +83,32 @@ test('a new Shanghai day permits rotation even when the UTC date is unchanged', 
   assert.equal(JSON.parse(await readFile(statePath(root), 'utf8')).lastRotationDate, '2026-10-14');
 });
 
+test('a backup check recovers a missed day and later checks keep the selected banner', async (t) => {
+  const root = await fixture(t, sampleReadme(banners[0]), '2026-10-13');
+  // Both early checks were missed; the 09:17 Shanghai check must recover.
+  const recovered = await rotateBanner({
+    root,
+    now: new Date('2026-10-14T01:17:00Z'),
+    chooseIndex: () => 1,
+  });
+  assert.equal(recovered.changed, true);
+  assert.notEqual(recovered.banner, banners[0]);
+  assert.equal(recovered.date, '2026-10-14');
+  const readme = await readFile(join(root, 'README.md'), 'utf8');
+  const state = await readFile(statePath(root), 'utf8');
+  for (const timestamp of ['2026-10-14T01:40:00Z', '2026-10-14T09:17:00Z']) {
+    const checked = await rotateBanner({
+      root,
+      now: new Date(timestamp),
+      chooseIndex: () => { throw new Error('A backup or push must not select twice in one day.'); },
+    });
+    assert.equal(checked.changed, false);
+    assert.equal(checked.banner, recovered.banner);
+    assert.equal(await readFile(join(root, 'README.md'), 'utf8'), readme);
+    assert.equal(await readFile(statePath(root), 'utf8'), state);
+  }
+});
+
 test('missing assets fail without changing the README', async (t) => {
   const content = sampleReadme();
   const root = await fixture(t, content);

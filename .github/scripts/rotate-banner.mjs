@@ -4,10 +4,10 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const banners = [
-  'assets/banner/jessy-01-ice-blue.webp',
-  'assets/banner/jessy-02-ink-vermilion.webp',
-  'assets/banner/jessy-03-mist-lilac.webp',
-  'assets/banner/jessy-04-cobalt.webp',
+  'assets/banner/jessy-01-ice-blue-v2.webp',
+  'assets/banner/jessy-02-ink-vermilion-v2.webp',
+  'assets/banner/jessy-03-mist-lilac-v2.webp',
+  'assets/banner/jessy-04-cobalt-v2.webp',
 ];
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));

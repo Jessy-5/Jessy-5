@@ -2,8 +2,16 @@ name: Rotate profile banner
 
 on:
   schedule:
-    # 09:17 in Asia/Shanghai (01:17 UTC), away from the busy start of the hour.
-    - cron: '17 1 * * *'
+    # Shanghai: 00:17, 01:17, 09:17 and 17:17. Later checks recover a missed run.
+    - cron: '17 1,9,16,17 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'assets/banner/*.webp'
+      - '.github/banner-state.json'
+      - '.github/scripts/rotate-banner*.mjs'
+      - '.github/workflows/rotate-banner.yml'
   workflow_dispatch:
 
 permissions:
@@ -28,7 +36,16 @@ jobs:
         run: node --test .github/scripts/rotate-banner.test.mjs
 
       - name: Select today's banner
-        run: node .github/scripts/rotate-banner.mjs
+        shell: bash
+        run: |
+          node .github/scripts/rotate-banner.mjs | tee banner-rotation-result.txt
+          {
+            echo '### Profile banner rotation'
+            echo
+            cat banner-rotation-result.txt
+            echo
+            echo 'The Shanghai date guard allows only one selection per day.'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit the banner update
         shell: bash
