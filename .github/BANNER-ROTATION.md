@@ -1,6 +1,6 @@
 # Profile banner rotation
 
-The profile uses four lossless WebP signature banners in `assets/banner/`. The first banner is ice blue; each daily rotation randomly selects one of the other three. The current layout uses `-v2.webp` filenames to give the revised images fresh URLs. Original PNGs, the standalone signature and earlier banner backups are excluded from this public repository.
+The profile uses four WebP signature banners in `assets/banner/`. Each daily rotation randomly selects one of the three banners that are not currently shown. The `-v3.webp` files are 1600 px wide and 81–136 KB each (lossy WebP, quality 88). The new filenames give the optimized images fresh URLs. Keep one lightweight file per variant on the active branch; original PNGs and the standalone signature should stay out of the repository.
 
 - Schedule: checks at **00:17, 01:17, 09:17 and 17:17 Asia/Shanghai** (`16:17, 17:17, 01:17 and 09:17 UTC`). The first successful check each day rotates the image; subsequent checks do nothing. GitHub may delay or drop scheduled runs, so these backup checks reduce dependence on one trigger. They cannot guarantee an exact rotation time.
 - A push to `main` that changes the profile, banner assets, rotation script/state or workflow also triggers a check. This verifies activation after uploading changes and recovers a stale banner without waiting for the next scheduled check. The bot's push uses `GITHUB_TOKEN`, which does not trigger another push workflow run.
